@@ -5,8 +5,11 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
@@ -48,15 +51,31 @@ public class Connect4Game extends JFrame implements ActionListener
 		/*
 		 *  https://stackoverflow.com/questions/2554684/multiple-layout-managers-in-java
 		 *  Overlap layout comes from the class we imported from the Internet. It is only
-		 *  used with masterPanel.
+		 *  used with gamePanel.
 		 *  
-		 *  masterPanel - merges columnPanel and imagePanel into the game board
+		 *  gamePanel - merges columnPanel and imagePanel into the game board
 		 *  columnPanel - contains the 7 JButtons that represent each column
 		 *  imagePanel - contains the 42 JLabels that represent each cell
+		 *  masterPanel - Places all the components of the game together
+		 *  menuPanel - Places all the components of the menu together
 		 */
-		JPanel masterPanel = new JPanel(new OverlapLayout());
+		JPanel gamePanel = new JPanel(new OverlapLayout());
 		JPanel columnPanel = new JPanel(new GridLayout(0, 7));
 		JPanel imagePanel = new JPanel(new GridLayout(6, 7));
+		JPanel masterPanel = new JPanel(new BorderLayout());
+		JPanel menuPanel = new JPanel(new GridBagLayout());
+		
+		GridBagConstraints c = new GridBagConstraints();
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.anchor = GridBagConstraints.PAGE_START;
+		c.gridx = 0;
+		JButton resetGame = new JButton("Reset Game");
+		resetGame.addActionListener(app);
+		menuPanel.add(resetGame, c);
+		c.anchor = GridBagConstraints.PAGE_START;
+		c.gridx = 2;
+		JLabel currentTurn = new JLabel("Turn: ");
+		menuPanel.add(currentTurn, c);
 		
 		imagePanel.setBackground(background);
 		columnPanel.setOpaque(false);
@@ -80,9 +99,12 @@ public class Connect4Game extends JFrame implements ActionListener
 		paintGame();
 
 		// Builds the frames and places them on top of each other.
+		
+		masterPanel.add(gamePanel, BorderLayout.CENTER);
+		gamePanel.add(columnPanel);
+		gamePanel.add(imagePanel);
+		masterPanel.add(menuPanel, BorderLayout.PAGE_START);
 		frame.add(masterPanel);
-		masterPanel.add(columnPanel);
-		masterPanel.add(imagePanel);
 		
 		ImageIcon icon = new ImageIcon("src/icon.png");
 		frame.setIconImage(icon.getImage());
@@ -230,23 +252,28 @@ public class Connect4Game extends JFrame implements ActionListener
 	// Determines what happens after a column is selected.
 	public void actionPerformed(ActionEvent evt)
 	{
-		if(!checkWinner())
+		// Checks to see if the reset button was pressed, if not, it's a move.
+		if(evt.getActionCommand().equals("Reset Game")) resetGame();
+		else
 		{
-			column = Integer.parseInt(evt.getActionCommand());
-			nextTurn();
-			System.out.println("--------------");
-			System.out.println("Col: " + column);
-			System.out.println("Turn: " + turnNumber);
-			paintGame();
-			for(int r = 0; r < gameboard.length; r++)
+			if(!checkWinner())
 			{
-				for(int c = 0; c < gameboard[0].length; c++)
+				column = Integer.parseInt(evt.getActionCommand());
+				nextTurn();
+				System.out.println("--------------");
+				System.out.println("Col: " + column);
+				System.out.println("Turn: " + turnNumber);
+				paintGame();
+				for(int r = 0; r < gameboard.length; r++)
 				{
-					System.out.print(gameboard[r][c]);
+					for(int c = 0; c < gameboard[0].length; c++)
+					{
+						System.out.print(gameboard[r][c]);
+					}
+					System.out.println();
 				}
-				System.out.println();
+				checkWinner();
 			}
-			checkWinner();
 		}
 	}
 	
