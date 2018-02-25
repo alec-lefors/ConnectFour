@@ -1,4 +1,3 @@
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -11,7 +10,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -41,10 +39,13 @@ public class Connect4Game extends JFrame implements ActionListener
     private static StretchIcon redWon = new StretchIcon("src/images/redwon.png");
     private static StretchIcon yellowWon = new StretchIcon("src/images/yellowwon.png");
     // The image of player's turn
-    private static JLabel currentTurn = new JLabel("Turn: ", redSpace, JLabel.LEFT);
+    private static JLabel currentTurn = new JLabel(redSpace);
 
 	// This color matches the background of the tiles.
     private static Color background = new Color(88, 171, 251); 
+    
+    // The text that goes in the reset game button.
+    private static String resetGameText = new String("New Game");
 
 	public static void main(String[] args)
 	{
@@ -98,7 +99,7 @@ public class Connect4Game extends JFrame implements ActionListener
 		c.weightx = 1;
 		c.weighty = 1;
 		c.gridx = 1;
-		JButton resetGame = new JButton("Reset Game");
+		JButton resetGame = new JButton(resetGameText);
 		resetGame.addActionListener(app);
 		menuPanel.add(resetGame, c);
 		c.gridx = 0;
@@ -131,26 +132,18 @@ public class Connect4Game extends JFrame implements ActionListener
 		if(isWinner)
 		{
 			int result = JOptionPane.showConfirmDialog(app, winnerName + " won!\nWould you like to start a new game?", "Game over", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if(result == JOptionPane.NO_OPTION)
+			if(result == JOptionPane.YES_OPTION)
 			{
-				System.exit(0);
-			}
-			else if(result == JOptionPane.YES_OPTION)
-			{
-				resetGame();
+				resetGame(false);
 			}
 			return true;
 		}
 		if(checkFilledBoard())
 		{
 			int result = JOptionPane.showConfirmDialog(app, "It's a tie!\nWould you like to start a new game?", "Game over", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if(result == JOptionPane.NO_OPTION)
+			if(result == JOptionPane.YES_OPTION)
 			{
-				System.exit(0);
-			}
-			else if(result == JOptionPane.YES_OPTION)
-			{
-				resetGame();
+				resetGame(false);
 			}
 			return true;
 		}
@@ -246,7 +239,7 @@ public class Connect4Game extends JFrame implements ActionListener
 	public void actionPerformed(ActionEvent evt)
 	{
 		// Checks to see if the reset button was pressed, if not, it's a move.
-		if(evt.getActionCommand().equals("Reset Game")) resetGame();
+		if(evt.getActionCommand().equals(resetGameText)) resetGame(true);
 		else
 		{
 			if(!checkWinner())
@@ -300,18 +293,31 @@ public class Connect4Game extends JFrame implements ActionListener
 		else turnNumber--;
     }
 	
-	private static void resetGame()
+	// Reset game will clear the board. If requiresDiaglog is true then a dialog will appear
+	// before restarting the game. If it is false no dialog will appear.
+	private static void resetGame(boolean requiresDialog)
     {
-        for(Integer i = 0; i < 6; i++)
-        {
-            for(Integer j = 0; j < 7; j++)
-            {
-               gameboard[i][j] = 0;
-            }
-        }
-        paintGame();
-        currentTurn.setIcon(redSpace);
-        turnNumber = 0;
+		if(requiresDialog)
+		{
+			int result = JOptionPane.showConfirmDialog(app, "Are you sure?", "Restart game?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			if(result == JOptionPane.YES_OPTION)
+			{
+				resetGame(false);
+			}
+		}
+		else
+		{
+	        for(Integer i = 0; i < 6; i++)
+	        {
+	            for(Integer j = 0; j < 7; j++)
+	            {
+	               gameboard[i][j] = 0;
+	            }
+	        }
+	        paintGame();
+	        currentTurn.setIcon(redSpace);
+	        turnNumber = 0;
+		}
     }
 
 }
