@@ -35,9 +35,13 @@ public class Connect4Game extends JFrame implements ActionListener
     
 	// All three "StretchIcon" objects come from a class imported
     // online. It allows the images to be flexible with any window size.
-    private static StretchIcon emptySpace = new StretchIcon("src/white.png");
-    private static StretchIcon redSpace = new StretchIcon("src/red.png");
-    private static StretchIcon yellowSpace = new StretchIcon("src/yellow.png");
+    private static StretchIcon emptySpace = new StretchIcon("src/images/empty.png");
+    private static StretchIcon redSpace = new StretchIcon("src/images/red.png");
+    private static StretchIcon yellowSpace = new StretchIcon("src/images/yellow.png");
+    private static StretchIcon redWon = new StretchIcon("src/images/redwon.png");
+    private static StretchIcon yellowWon = new StretchIcon("src/images/yellowwon.png");
+    // The image of player's turn
+    private static JLabel currentTurn = new JLabel("Turn: ", redSpace, JLabel.LEFT);
 
 	// This color matches the background of the tiles.
     private static Color background = new Color(88, 171, 251); 
@@ -65,18 +69,6 @@ public class Connect4Game extends JFrame implements ActionListener
 		JPanel masterPanel = new JPanel(new BorderLayout());
 		JPanel menuPanel = new JPanel(new GridBagLayout());
 		
-		GridBagConstraints c = new GridBagConstraints();
-		c.fill = GridBagConstraints.HORIZONTAL;
-		c.anchor = GridBagConstraints.PAGE_START;
-		c.gridx = 0;
-		JButton resetGame = new JButton("Reset Game");
-		resetGame.addActionListener(app);
-		menuPanel.add(resetGame, c);
-		c.anchor = GridBagConstraints.PAGE_START;
-		c.gridx = 2;
-		JLabel currentTurn = new JLabel("Turn: ");
-		menuPanel.add(currentTurn, c);
-		
 		imagePanel.setBackground(background);
 		columnPanel.setOpaque(false);
 
@@ -99,15 +91,25 @@ public class Connect4Game extends JFrame implements ActionListener
 		paintGame();
 
 		// Builds the frames and places them on top of each other.
-		
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridheight = 2;
+		c.ipady = 20;
+		c.fill = GridBagConstraints.BOTH;
+		c.weightx = 1;
+		c.weighty = 1;
+		c.gridx = 1;
+		JButton resetGame = new JButton("Reset Game");
+		resetGame.addActionListener(app);
+		menuPanel.add(resetGame, c);
+		c.gridx = 0;
+		menuPanel.add(currentTurn, c);
 		masterPanel.add(gamePanel, BorderLayout.CENTER);
 		gamePanel.add(columnPanel);
 		gamePanel.add(imagePanel);
 		masterPanel.add(menuPanel, BorderLayout.PAGE_START);
 		frame.add(masterPanel);
 		
-		ImageIcon icon = new ImageIcon("src/icon.png");
-		frame.setIconImage(icon.getImage());
+		frame.setIconImage(redSpace.getImage());
 		
 		// Sets the JFrame to visible, sets the location to the center, and sets the X button to kill the program. 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -118,26 +120,17 @@ public class Connect4Game extends JFrame implements ActionListener
 	
 	public static boolean checkWinner()
 	{
-		// replace with this once all tests are complete
-		// if(checkHorizontal() == 1 || checkVertical() == 1 || checkDiags() == 1)
-		if(checkHorizontal() == 1 || checkVertical() == 1 || checkDiags() == 1)
+		String winnerName = new String();
+		boolean isWinner = true;
+		int horizontal = checkHorizontal();
+		int vertical = checkVertical();
+		int diagonal = checkDiags();
+		if(horizontal == 0 && vertical == 0 && diagonal == 0) isWinner = false;
+		else if(horizontal == 1 || vertical == 1 || diagonal == 1) winnerName = "Red";
+		else winnerName = "Yellow";
+		if(isWinner)
 		{
-			int result = JOptionPane.showConfirmDialog(app, "Red won!\nWould you like to start a new game?", "Game over", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
-			if(result == JOptionPane.NO_OPTION)
-			{
-				System.exit(0);
-			}
-			else if(result == JOptionPane.YES_OPTION)
-			{
-				resetGame();
-			}
-			return true;
-		}
-		// replace with this once all tests are complete
-		// if(checkHorizontal() == 2 || checkVertical() == 2 || checkDiags() == 2)
-		if(checkHorizontal() == 2 || checkVertical() == 2 || checkDiags() == 2)
-		{
-			int result = JOptionPane.showConfirmDialog(app, "Yellow won!\nWould you like to start a new game?", "Game over", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int result = JOptionPane.showConfirmDialog(app, winnerName + " won!\nWould you like to start a new game?", "Game over", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if(result == JOptionPane.NO_OPTION)
 			{
 				System.exit(0);
@@ -291,7 +284,7 @@ public class Connect4Game extends JFrame implements ActionListener
 		if(gameboard[0][column] == 0)
 		{
 	        outerLoop:
-        	for(int i = 0; i < gameboard.length; i++)
+	        	for(int i = 0; i < gameboard.length; i++)
             {
                 if (i < gameboard.length && gameboard[i][column]!=0)
                 {
@@ -300,6 +293,9 @@ public class Connect4Game extends JFrame implements ActionListener
                 }
                 else if(i == 5 && gameboard[i][column]==0) gameboard[i][column] = player;
             }
+			// Changes the current player icon.
+			if(player == 2) currentTurn.setIcon(redSpace);
+			else currentTurn.setIcon(yellowSpace);
 		}
 		else turnNumber--;
     }
@@ -313,7 +309,8 @@ public class Connect4Game extends JFrame implements ActionListener
                gameboard[i][j] = 0;
             }
         }
-        paintGame();  
+        paintGame();
+        currentTurn.setIcon(redSpace);
         turnNumber = 0;
     }
 
