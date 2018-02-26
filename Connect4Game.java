@@ -151,6 +151,13 @@ public class Connect4Game extends JFrame implements ActionListener
 		return false;
 	}
 	
+	//The winningPiece method returns a Stretch icon in order to replace the tiles that ended up winning the game with a glowing variation
+	public static StretchIcon winningPiece(int i, int j)
+	{
+		if (gameboard[i][j]==1) return redWon;
+		else return yellowWon;
+	}
+	
 	// Checks for any horizontal 4 in a rows. Returns 0 if none, returns 1 or 2 if there is.
 	public static int checkHorizontal()
 	{
@@ -160,6 +167,11 @@ public class Connect4Game extends JFrame implements ActionListener
 			{
 				if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i][j+1] && gameboard[i][j]==gameboard[i][j+2] && gameboard[i][j]==gameboard[i][j+3])
 				{
+					int winningLabel = j + 7*i;
+					for (int k = 0; k < 4; k++)
+					{
+						myLabels[winningLabel+k].setIcon(winningPiece(i, j+k));
+					}
 					return gameboard[i][j];
 				}
 			}
@@ -175,6 +187,11 @@ public class Connect4Game extends JFrame implements ActionListener
 			{
 				if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i+1][j+1] && gameboard[i][j]==gameboard[i+2][j+2] && gameboard[i][j]==gameboard[i+3][j+3])
 				{
+					int winningLabel = j + 7*i;
+					for (int k = 0; k < 4; k++)
+					{
+						myLabels[winningLabel+(7*k)+k].setIcon(winningPiece(i+k, j+k));
+					}
 					return gameboard[i][j];
 				}
 			}
@@ -201,6 +218,11 @@ public class Connect4Game extends JFrame implements ActionListener
 			{
 				if (gameboard[j][i] != 0 && gameboard[j][i]==gameboard[j+1][i] && gameboard[j][i]==gameboard[j+2][i] && gameboard[j][i]==gameboard[j+3][i])
 				{
+					int winningLabel = i + 7*j;
+					for (int k = 0; k < 4; k++)
+					{
+						myLabels[winningLabel+(7*k)].setIcon(winningPiece(j+k, i));
+					}
 					return gameboard[j][i];
 				}
 			}
