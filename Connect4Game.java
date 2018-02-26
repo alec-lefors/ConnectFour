@@ -12,47 +12,47 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import java.awt.event.ActionEvent;
 public class Connect4Game extends JFrame implements ActionListener
 {
 	private static int[][] gameboard = new int[6][7]; // The game board is 6 by 7
-    private static int turnNumber = 0; // Keeps track of who's turn it is.
-    private static JButton btnCol0, btnCol1, btnCol2, btnCol3, btnCol4, btnCol5, btnCol6;
-    private static JLabel label0, label1, label2, label3, label4, label5, label6, label7, label8, label9, label10, label11, label12, label13, label14, label15, label16, label17,
-    label18, label19, label20, label21, label22, label23, label24, label25, label26, label27,
-    label28, label29, label30, label31, label32, label33, label34, label35, label36, label37,
-    label38, label39, label40, label41; // All the cells have their own JLabel to display
-    									// the tile image.
-    private static JLabel[] myLabels = {label0, label1, label2, label3, label4, label5,
-    		label6, label7, label8, label9, label10, label11, label12, label13, label14,
-    		label15, label16, label17, label18, label19, label20, label21, label22, label23,
-    		label24, label25, label26, label27, label28, label29, label30, label31, label32,
-    		label33, label34, label35, label36, label37, label38, label39, label40, label41};
-    private static int column; // keeps track of what column was last selected
-    public static Connect4Game app = new Connect4Game();
-    
+	private static int turnNumber = 0; // Keeps track of who's turn it is.
+	private static JButton btnCol0, btnCol1, btnCol2, btnCol3, btnCol4, btnCol5, btnCol6;
+	private static JLabel label0, label1, label2, label3, label4, label5, label6, label7, label8, label9, label10, label11, label12, label13, label14, label15, label16, label17,
+	label18, label19, label20, label21, label22, label23, label24, label25, label26, label27,
+	label28, label29, label30, label31, label32, label33, label34, label35, label36, label37,
+	label38, label39, label40, label41; 	// All the cells have their own JLabel to display
+										// the tile image.
+	private static JLabel[] myLabels = {label0, label1, label2, label3, label4, label5,
+		label6, label7, label8, label9, label10, label11, label12, label13, label14,
+		label15, label16, label17, label18, label19, label20, label21, label22, label23,
+		label24, label25, label26, label27, label28, label29, label30, label31, label32,
+		label33, label34, label35, label36, label37, label38, label39, label40, label41};
+	private static int column; // keeps track of what column was last selected
+	public static Connect4Game app = new Connect4Game();
+	
 	// All three "StretchIcon" objects come from a class imported
-    // online. It allows the images to be flexible with any window size.
-    private static StretchIcon emptySpace = new StretchIcon("src/images/empty.png");
-    private static StretchIcon redSpace = new StretchIcon("src/images/red.png");
-    private static StretchIcon yellowSpace = new StretchIcon("src/images/yellow.png");
-    private static StretchIcon redWon = new StretchIcon("src/images/redwon.png");
-    private static StretchIcon yellowWon = new StretchIcon("src/images/yellowwon.png");
-    // The image of player's turn
-    private static JLabel currentTurn = new JLabel(redSpace);
-
+	// online. It allows the images to be flexible with any window size.
+	private static StretchIcon emptySpace = new StretchIcon("images/empty.png");
+	private static StretchIcon redSpace = new StretchIcon("images/red.png");
+	private static StretchIcon yellowSpace = new StretchIcon("images/yellow.png");
+	private static StretchIcon redWon = new StretchIcon("images/redwon.png");
+	private static StretchIcon yellowWon = new StretchIcon("images/yellowwon.png");
+	// The image of player's turn
+	private static JLabel currentTurn = new JLabel(redSpace);
+	
 	// This color matches the background of the tiles.
-    private static Color background = new Color(88, 171, 251); 
-    
-    // The text that goes in the reset game button.
-    private static String resetGameText = new String("New Game");
-
+	private static Color background = new Color(88, 171, 251); 
+	
+	// The text that goes in the reset game button.
+	private static String resetGameText = new String("New Game");
+	
 	public static void main(String[] args)
 	{
 		JFrame frame = new JFrame("Connect Four");
 		frame.setSize(432, 370);
 		frame.setMinimumSize(new Dimension(520, 446));
-		
 		/*
 		 *  https://stackoverflow.com/questions/2554684/multiple-layout-managers-in-java
 		 *  Overlap layout comes from the class we imported from the Internet. It is only
@@ -126,8 +126,8 @@ public class Connect4Game extends JFrame implements ActionListener
 		int horizontal = checkHorizontal();
 		int vertical = checkVertical();
 		int diagonal = checkDiags();
-		if(horizontal == 0 && vertical == 0 && diagonal == 0) isWinner = false;
-		else if(horizontal == 1 || vertical == 1 || diagonal == 1) winnerName = "Red";
+		if((horizontal | vertical | diagonal) == 0) isWinner = false;
+		else if((horizontal | vertical | diagonal) == 1) winnerName = "Red";
 		else winnerName = "Yellow";
 		if(isWinner)
 		{
@@ -152,60 +152,60 @@ public class Connect4Game extends JFrame implements ActionListener
 	
 	// Checks for any horizontal 4 in a rows. Returns 0 if none, returns 1 or 2 if there is.
 	public static int checkHorizontal()
-    {
-        for(int i = 0; i < gameboard.length; i++)
-        {
-            for(int j = 0; j < gameboard[0].length-3; j++)
-            {
-                if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i][j+1] && gameboard[i][j]==gameboard[i][j+2] && gameboard[i][j]==gameboard[i][j+3])
-                {
-                		return gameboard[i][j];
-                }
-            }
-        }
-        return 0;
-    }
+	{
+		for(int i = 0; i < gameboard.length; i++)
+		{
+			for(int j = 0; j < gameboard[0].length-3; j++)
+			{
+				if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i][j+1] && gameboard[i][j]==gameboard[i][j+2] && gameboard[i][j]==gameboard[i][j+3])
+				{
+					return gameboard[i][j];
+				}
+			}
+		}
+		return 0;
+	}
 	
 	public static int checkDiags()
-    {
-        for(int i = 0; i < gameboard.length-3; i++)
-        {
-            for(int j = 0; j < gameboard[0].length-3; j++)
-            {
-                if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i+1][j+1] && gameboard[i][j]==gameboard[i+2][j+2] && gameboard[i][j]==gameboard[i+3][j+3])
-                {
-                        return gameboard[i][j];
-                }
-            }
-        }
-        for(int i = gameboard.length-1; i > 2; i--)
-        {
-            for(int j = 0; j < gameboard[0].length-3; j++)
-            {
-                if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i-1][j+1] && gameboard[i][j]==gameboard[i-2][j+2] && gameboard[i][j]==gameboard[i-3][j+3])
-                {
-                        return gameboard[i][j];
-                }
-            }
-        }
-        return 0;
-    }
+	{
+		for(int i = 0; i < gameboard.length-3; i++)
+		{
+			for(int j = 0; j < gameboard[0].length-3; j++)
+			{
+				if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i+1][j+1] && gameboard[i][j]==gameboard[i+2][j+2] && gameboard[i][j]==gameboard[i+3][j+3])
+				{
+					return gameboard[i][j];
+				}
+			}
+		}
+		for(int i = gameboard.length-1; i > 2; i--)
+		{
+			for(int j = 0; j < gameboard[0].length-3; j++)
+			{
+				if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i-1][j+1] && gameboard[i][j]==gameboard[i-2][j+2] && gameboard[i][j]==gameboard[i-3][j+3])
+				{
+					return gameboard[i][j];
+				}
+			}
+		}
+		return 0;
+	}
 	
 	// Checks for any vertical 4 in a rows. Returns 0 if none, returns 1 or 2 if there is.
 	public static int checkVertical()
-    {
-        for(int i = 0; i < gameboard[0].length; i++)
-        {
-            for(int j = 0; j < gameboard.length-3; j++)
-            {
-                if (gameboard[j][i] != 0 && gameboard[j][i]==gameboard[j+1][i] && gameboard[j][i]==gameboard[j+2][i] && gameboard[j][i]==gameboard[j+3][i])
-                {
-                        return gameboard[j][i];
-                }
-            }
-        }
-        return 0;
-    }
+	{
+		for(int i = 0; i < gameboard[0].length; i++)
+		{
+			for(int j = 0; j < gameboard.length-3; j++)
+			{
+				if (gameboard[j][i] != 0 && gameboard[j][i]==gameboard[j+1][i] && gameboard[j][i]==gameboard[j+2][i] && gameboard[j][i]==gameboard[j+3][i])
+				{
+					return gameboard[j][i];
+				}
+			}
+		}
+		return 0;
+	}
 	
 	public static boolean checkFilledBoard()
 	{
@@ -265,38 +265,38 @@ public class Connect4Game extends JFrame implements ActionListener
 	
 	// Keeps track of turns in the game. Red always goes first.
 	public static void nextTurn()
-    {
-        if(turnNumber % 2 == 0) placeTile(1);
-        else placeTile(2);
-        turnNumber++;
-    }
+	{
+		if(turnNumber % 2 == 0) placeTile(1);
+		else placeTile(2);
+		turnNumber++;
+	}
 	
 	// Keeps track of all tiles, also checks for invalid moves.
 	public static void placeTile(int player)
-    {
+	{
 		if(gameboard[0][column] == 0)
 		{
-	        outerLoop:
-	        	for(int i = 0; i < gameboard.length; i++)
-            {
-                if (i < gameboard.length && gameboard[i][column]!=0)
-                {
-                    gameboard[i-1][column] = player;
-                    break outerLoop;
-                }
-                else if(i == 5 && gameboard[i][column]==0) gameboard[i][column] = player;
-            }
-			// Changes the current player icon.
-			if(player == 2) currentTurn.setIcon(redSpace);
+			outerLoop:
+				for(int i = 0; i < gameboard.length; i++)
+				{
+					if (i < gameboard.length && gameboard[i][column]!=0)
+					{
+						gameboard[i-1][column] = player;
+						break outerLoop;
+					}
+					else if(i == 5 && gameboard[i][column]==0) gameboard[i][column] = player;
+				}
+		// Changes the current player icon.
+		if(player == 2) currentTurn.setIcon(redSpace);
 			else currentTurn.setIcon(yellowSpace);
 		}
 		else turnNumber--;
-    }
+	}
 	
 	// Reset game will clear the board. If requiresDiaglog is true then a dialog will appear
 	// before restarting the game. If it is false no dialog will appear.
 	private static void resetGame(boolean requiresDialog)
-    {
+	{
 		if(requiresDialog)
 		{
 			int result = JOptionPane.showConfirmDialog(app, "Are you sure?", "Restart game?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -307,17 +307,17 @@ public class Connect4Game extends JFrame implements ActionListener
 		}
 		else
 		{
-	        for(Integer i = 0; i < 6; i++)
-	        {
-	            for(Integer j = 0; j < 7; j++)
-	            {
-	               gameboard[i][j] = 0;
-	            }
-	        }
-	        paintGame();
-	        currentTurn.setIcon(redSpace);
-	        turnNumber = 0;
+			for(Integer i = 0; i < 6; i++)
+			{
+				for(Integer j = 0; j < 7; j++)
+				{
+					gameboard[i][j] = 0;
+				}
+			}
+			paintGame();
+			currentTurn.setIcon(redSpace);
+			turnNumber = 0;
 		}
-    }
+	}
 
 }
