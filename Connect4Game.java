@@ -1,3 +1,4 @@
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -299,7 +300,7 @@ public class Connect4Game extends JFrame implements ActionListener
 	{
 		if(requiresDialog)
 		{
-			int result = JOptionPane.showConfirmDialog(app, "Are you sure?", "Restart game?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
+			int result = JOptionPane.showConfirmDialog(app, "Are you sure?", "Start a new game?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if(result == JOptionPane.YES_OPTION)
 			{
 				resetGame(false);
