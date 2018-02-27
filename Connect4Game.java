@@ -2,18 +2,23 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
-import java.net.URL;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.ActionEvent;
 public class Connect4Game extends JFrame implements ActionListener
 {
@@ -30,6 +35,8 @@ public class Connect4Game extends JFrame implements ActionListener
 		label15, label16, label17, label18, label19, label20, label21, label22, label23,
 		label24, label25, label26, label27, label28, label29, label30, label31, label32,
 		label33, label34, label35, label36, label37, label38, label39, label40, label41};
+	private static JLabel hov0, hov1, hov2, hov3, hov4, hov5, hov6;
+	private static JLabel[] hovLabels = {hov0, hov1, hov2, hov3, hov4, hov5, hov6};
 	private static int column; // keeps track of what column was last selected
 	public static Connect4Game app = new Connect4Game();
 	
@@ -41,17 +48,15 @@ public class Connect4Game extends JFrame implements ActionListener
 	private static StretchIcon redWon = new StretchIcon("images/redwon.png");
 	private static StretchIcon yellowWon = new StretchIcon("images/yellowwon.png");
 	// The image of player's turn
-	private static JLabel currentTurn = new JLabel(redSpace);
+	private static StretchIcon currentTurn = redSpace;
 	
 	// This color matches the background of the tiles.
 	private static Color background = new Color(88, 171, 251); 
 	
-	// The text that goes in the reset game button.
-	private static String resetGameText = new String("New Game");
-	
-	public static void main(String[] args)
+	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException
 	{
 		JFrame frame = new JFrame("Connect Four");
+		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		frame.setSize(432, 370);
 		frame.setMinimumSize(new Dimension(520, 446));
 		/*
@@ -69,16 +74,72 @@ public class Connect4Game extends JFrame implements ActionListener
 		JPanel columnPanel = new JPanel(new GridLayout(0, 7));
 		JPanel imagePanel = new JPanel(new GridLayout(6, 7));
 		JPanel masterPanel = new JPanel(new BorderLayout());
-		JPanel menuPanel = new JPanel(new GridBagLayout());
+		JPanel menuPanel = new JPanel(new GridLayout(0, 7));
+		
+		// Adds a menu bar at the top of the frame
+		JMenuBar menuBar = new JMenuBar();
+		
+		// Creates tabs for the menu bar
+		JMenu file = new JMenu("File");
+		JMenu experimental = new JMenu("Experimental");
+		JMenu changeColor = new JMenu("Background Color");
+		
+		// Creates items for the tabs
+		JMenuItem newGame = new JMenuItem("New Game", null);
+		JMenuItem exitGame = new JMenuItem("Exit", null);
+		JMenuItem changeColorBlack = new JMenuItem("Black", null);
+		JMenuItem changeColorDefault = new JMenuItem("Default", null);
+		
+		// Sets the for text when you hover over items
+		newGame.setToolTipText("Create a new game");
+		exitGame.setToolTipText("Exit Connect Four");
+		changeColorBlack.setToolTipText("Change color to black.");
+		changeColorDefault.setToolTipText("Change color to the default color.");
+		
+		// Adds items to each tab
+		file.add(newGame);
+		file.add(exitGame);
+		experimental.add(changeColor);
+		changeColor.add(changeColorDefault);
+		changeColor.add(changeColorBlack);
+		menuBar.add(file);
+		menuBar.add(experimental);
+		frame.setJMenuBar(menuBar);
+		
+		newGame.addActionListener((ActionEvent event) ->
+		{
+			resetGame(!checkEmptyBoard());
+		});
+		exitGame.addActionListener((ActionEvent event) ->
+		{
+			System.exit(0);
+		});
+		changeColorDefault.addActionListener((ActionEvent event) ->
+		{
+			imagePanel.setBackground(background);
+		});
+		changeColorBlack.addActionListener((ActionEvent event) ->
+		{
+			imagePanel.setBackground(new Color(20, 20, 20));
+		});
 		
 		imagePanel.setBackground(background);
 		columnPanel.setOpaque(false);
-
+		
 		JButton[] myButtons = {btnCol0, btnCol1, btnCol2, btnCol3, btnCol4, btnCol5, btnCol6};
+		MouseListener hoverListener = new MouseAdapter()
+		{
+			public void mouseEntered(MouseEvent e)
+			{
+				System.out.println((JButton) e.getSource());
+			}
+		};
+		
 		for(Integer i = 0; i < myButtons.length; i++)
 		{
 			myButtons[i] = new JButton(i.toString());
 			myButtons[i].addActionListener(app);
+			myButtons[i].addMouseListener(hoverListener);
 			columnPanel.add(myButtons[i]);
 			myButtons[i].setOpaque(false);
 		}
@@ -90,21 +151,14 @@ public class Connect4Game extends JFrame implements ActionListener
 			imagePanel.add(myLabels[i]);
 		}
 		
+		for(int i = 0; i < 7; i++)
+		{
+//			menuPanel.add(currentTurn);
+		}
+		
 		paintGame();
 
 		// Builds the frames and places them on top of each other.
-		GridBagConstraints c = new GridBagConstraints();
-		c.gridheight = 2;
-		c.ipady = 20;
-		c.fill = GridBagConstraints.BOTH;
-		c.weightx = 1;
-		c.weighty = 1;
-		c.gridx = 1;
-		JButton resetGame = new JButton(resetGameText);
-		resetGame.addActionListener(app);
-		menuPanel.add(resetGame, c);
-		c.gridx = 0;
-		menuPanel.add(currentTurn, c);
 		masterPanel.add(gamePanel, BorderLayout.CENTER);
 		gamePanel.add(columnPanel);
 		gamePanel.add(imagePanel);
@@ -179,6 +233,7 @@ public class Connect4Game extends JFrame implements ActionListener
 		return 0;
 	}
 	
+	// Checks for any diagonal 4 in a rows. Returns 0 if none, returns 1 or 2 if there is.
 	public static int checkDiags()
 	{
 		for(int i = 0; i < gameboard.length-3; i++)
@@ -202,6 +257,11 @@ public class Connect4Game extends JFrame implements ActionListener
 			{
 				if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i-1][j+1] && gameboard[i][j]==gameboard[i-2][j+2] && gameboard[i][j]==gameboard[i-3][j+3])
 				{
+					int winningLabel = j + 7*i;
+					for (int k = 0; k < 4; k++)
+					{
+						myLabels[winningLabel-(7*k)+k].setIcon(winningPiece(i-k, j+k));
+					}
 					return gameboard[i][j];
 				}
 			}
@@ -230,6 +290,7 @@ public class Connect4Game extends JFrame implements ActionListener
 		return 0;
 	}
 	
+	// Checks to see if the board is full, denoting a tie.
 	public static boolean checkFilledBoard()
 	{
 		for(int i = 0; i < gameboard.length; i++)
@@ -237,6 +298,19 @@ public class Connect4Game extends JFrame implements ActionListener
 			for(int j = 0; j < gameboard[0].length; j++)
 			{
 				if(gameboard[i][j] == 0) return false;
+			}
+		}
+		return true;
+	}
+	
+	// Checks if the board is empty.
+	public static boolean checkEmptyBoard()
+	{
+		for(int i = 0; i < gameboard.length; i++)
+		{
+			for(int j = 0; j < gameboard[0].length; j++)
+			{
+				if(gameboard[i][j] != 0) return false;
 			}
 		}
 		return true;
@@ -261,28 +335,23 @@ public class Connect4Game extends JFrame implements ActionListener
 	// Determines what happens after a column is selected.
 	public void actionPerformed(ActionEvent evt)
 	{
-		// Checks to see if the reset button was pressed, if not, it's a move.
-		if(evt.getActionCommand().equals(resetGameText)) resetGame(true);
-		else
+		if(!checkWinner())
 		{
-			if(!checkWinner())
+			column = Integer.parseInt(evt.getActionCommand());
+			nextTurn();
+			System.out.println("--------------");
+			System.out.println("Col: " + column);
+			System.out.println("Turn: " + turnNumber);
+			paintGame();
+			for(int r = 0; r < gameboard.length; r++)
 			{
-				column = Integer.parseInt(evt.getActionCommand());
-				nextTurn();
-				System.out.println("--------------");
-				System.out.println("Col: " + column);
-				System.out.println("Turn: " + turnNumber);
-				paintGame();
-				for(int r = 0; r < gameboard.length; r++)
+				for(int c = 0; c < gameboard[0].length; c++)
 				{
-					for(int c = 0; c < gameboard[0].length; c++)
-					{
-						System.out.print(gameboard[r][c]);
-					}
-					System.out.println();
+					System.out.print(gameboard[r][c]);
 				}
-				checkWinner();
+				System.out.println();
 			}
+			checkWinner();
 		}
 	}
 	
@@ -310,8 +379,8 @@ public class Connect4Game extends JFrame implements ActionListener
 					else if(i == 5 && gameboard[i][column]==0) gameboard[i][column] = player;
 				}
 		// Changes the current player icon.
-		if(player == 2) currentTurn.setIcon(redSpace);
-			else currentTurn.setIcon(yellowSpace);
+		if(player == 2) currentTurn = redSpace;
+			else currentTurn = yellowSpace;
 		}
 		else turnNumber--;
 	}
@@ -338,7 +407,7 @@ public class Connect4Game extends JFrame implements ActionListener
 				}
 			}
 			paintGame();
-			currentTurn.setIcon(redSpace);
+			currentTurn = redSpace;
 			turnNumber = 0;
 		}
 	}
