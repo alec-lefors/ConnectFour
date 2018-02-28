@@ -1,4 +1,3 @@
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -16,6 +15,8 @@ import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -47,8 +48,10 @@ public class Connect4Game extends JFrame implements ActionListener
 	private static StretchIcon yellowSpace = new StretchIcon("images/yellow.png");
 	private static StretchIcon redWon = new StretchIcon("images/redwon.png");
 	private static StretchIcon yellowWon = new StretchIcon("images/yellowwon.png");
+	private static StretchIcon redHover = new StretchIcon("images/redhover.png");
+	private static StretchIcon yellowHover = new StretchIcon("images/yellowhover.png");
 	// The image of player's turn
-	private static StretchIcon currentTurn = redSpace;
+	private static StretchIcon currentTurn = redHover;
 	
 	// This color matches the background of the tiles.
 	private static Color background = new Color(88, 171, 251); 
@@ -59,6 +62,8 @@ public class Connect4Game extends JFrame implements ActionListener
 		UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 		frame.setSize(432, 370);
 		frame.setMinimumSize(new Dimension(520, 446));
+		// Makes use of the macOS menu bar rather than the traditional menu bar in Windows.
+		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		/*
 		 *  https://stackoverflow.com/questions/2554684/multiple-layout-managers-in-java
 		 *  Overlap layout comes from the class we imported from the Internet. It is only
@@ -127,11 +132,31 @@ public class Connect4Game extends JFrame implements ActionListener
 		columnPanel.setOpaque(false);
 		
 		JButton[] myButtons = {btnCol0, btnCol1, btnCol2, btnCol3, btnCol4, btnCol5, btnCol6};
+		// These methods keep track of who's turn it is in the UI. 
 		MouseListener hoverListener = new MouseAdapter()
 		{
 			public void mouseEntered(MouseEvent e)
 			{
-				System.out.println((JButton) e.getSource());
+				for(int i = 0; i < 7; i++)
+				{
+					if(e.getSource().equals(myButtons[i])) hovLabels[i].setIcon(currentTurn);
+				}
+			}
+			
+			public void mouseExited(MouseEvent e)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					if(e.getSource().equals(myButtons[i])) hovLabels[i].setIcon(null);
+				}
+			}
+			
+			public void mouseClicked(MouseEvent e)
+			{
+				for(int i = 0; i < 7; i++)
+				{
+					if(e.getSource().equals(myButtons[i])) hovLabels[i].setIcon(currentTurn);
+				}
 			}
 		};
 		
@@ -153,17 +178,25 @@ public class Connect4Game extends JFrame implements ActionListener
 		
 		for(int i = 0; i < 7; i++)
 		{
-//			menuPanel.add(currentTurn);
+			hovLabels[i] = new JLabel(" ");
+			menuPanel.add(hovLabels[i]);
 		}
 		
 		paintGame();
 
 		// Builds the frames and places them on top of each other.
+		masterPanel.add(menuPanel, BorderLayout.PAGE_START);
 		masterPanel.add(gamePanel, BorderLayout.CENTER);
 		gamePanel.add(columnPanel);
 		gamePanel.add(imagePanel);
-		masterPanel.add(menuPanel, BorderLayout.PAGE_START);
 		frame.add(masterPanel);
+		
+		frame.addComponentListener(new ComponentAdapter()
+		{
+			public void componentResized(ComponentEvent e) {
+				hovLabels[0].setPreferredSize(getSizeOfHover(myLabels[0].getWidth(), myLabels[0].getHeight()));
+			}
+		});
 		
 		frame.setIconImage(redSpace.getImage());
 		
@@ -333,11 +366,11 @@ public class Connect4Game extends JFrame implements ActionListener
 	}
 	
 	// Determines what happens after a column is selected.
-	public void actionPerformed(ActionEvent evt)
+	public void actionPerformed(ActionEvent e)
 	{
 		if(!checkWinner())
 		{
-			column = Integer.parseInt(evt.getActionCommand());
+			column = Integer.parseInt(e.getActionCommand());
 			nextTurn();
 			System.out.println("--------------");
 			System.out.println("Col: " + column);
@@ -379,8 +412,8 @@ public class Connect4Game extends JFrame implements ActionListener
 					else if(i == 5 && gameboard[i][column]==0) gameboard[i][column] = player;
 				}
 		// Changes the current player icon.
-		if(player == 2) currentTurn = redSpace;
-			else currentTurn = yellowSpace;
+		if(player == 2) currentTurn = redHover;
+			else currentTurn = yellowHover;
 		}
 		else turnNumber--;
 	}
@@ -407,9 +440,16 @@ public class Connect4Game extends JFrame implements ActionListener
 				}
 			}
 			paintGame();
-			currentTurn = redSpace;
+			currentTurn = redHover;
 			turnNumber = 0;
 		}
+	}
+	
+	// Gets the height and width of a cell and returns the smallest value of the two.
+	private static Dimension getSizeOfHover(int w, int h)
+	{
+		if(w < h) return (new Dimension(w, w));
+		return (new Dimension(h, h));
 	}
 
 }
