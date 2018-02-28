@@ -129,6 +129,7 @@ public class Connect4Game extends JFrame implements ActionListener
 		});
 		
 		imagePanel.setBackground(background);
+		menuPanel.setBackground(new Color(255, 255, 255));
 		columnPanel.setOpaque(false);
 		
 		JButton[] myButtons = {btnCol0, btnCol1, btnCol2, btnCol3, btnCol4, btnCol5, btnCol6};
@@ -180,6 +181,7 @@ public class Connect4Game extends JFrame implements ActionListener
 		{
 			hovLabels[i] = new JLabel(" ");
 			menuPanel.add(hovLabels[i]);
+			hovLabels[i].setPreferredSize(new Dimension(68, 68));
 		}
 		
 		paintGame();
