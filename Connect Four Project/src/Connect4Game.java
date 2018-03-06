@@ -87,7 +87,7 @@ public class Connect4Game extends JFrame implements ActionListener
 		
 		// Creates tabs for the menu bar
 		JMenu file = new JMenu("File");
-		JMenu experimental = new JMenu("Experimental");
+		JMenu experimental = new JMenu("Prefrences");
 		JMenu changeColor = new JMenu("Background Color");
 		
 		// Creates items for the tabs
