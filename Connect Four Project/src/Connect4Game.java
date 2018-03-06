@@ -25,17 +25,19 @@ public class Connect4Game extends JFrame implements ActionListener
 {
 	private static int[][] gameboard = new int[6][7]; // The game board is 6 by 7
 	private static int turnNumber = 0; // Keeps track of who's turn it is.
-	private static JButton btnCol0, btnCol1, btnCol2, btnCol3, btnCol4, btnCol5, btnCol6;
+	private static JButton btnCol0, btnCol1, btnCol2, btnCol3, btnCol4, btnCol5, btnCol6; //Creates 7 buttons for the user to choose which column
 	private static JLabel label0, label1, label2, label3, label4, label5, label6, label7, label8, label9, label10, label11, label12, label13, label14, label15, label16, label17,
 	label18, label19, label20, label21, label22, label23, label24, label25, label26, label27,
 	label28, label29, label30, label31, label32, label33, label34, label35, label36, label37,
 	label38, label39, label40, label41; 	// All the cells have their own JLabel to display
 										// the tile image.
+	// Creates a JLabel array
 	private static JLabel[] myLabels = {label0, label1, label2, label3, label4, label5,
 		label6, label7, label8, label9, label10, label11, label12, label13, label14,
 		label15, label16, label17, label18, label19, label20, label21, label22, label23,
 		label24, label25, label26, label27, label28, label29, label30, label31, label32,
 		label33, label34, label35, label36, label37, label38, label39, label40, label41};
+	// 7 hover buttons for user interface
 	private static JLabel hov0, hov1, hov2, hov3, hov4, hov5, hov6;
 	private static JLabel[] hovLabels = {hov0, hov1, hov2, hov3, hov4, hov5, hov6};
 	private static int column; // keeps track of what column was last selected
@@ -54,6 +56,7 @@ public class Connect4Game extends JFrame implements ActionListener
 	// This color matches the background of the tiles.
 	private static Color background = new Color(88, 171, 251); 
 	
+	// Thrown exceptions for the setLookAndFeel method
 	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException
 	{
 		JFrame frame = new JFrame("Connect Four");
@@ -109,18 +112,22 @@ public class Connect4Game extends JFrame implements ActionListener
 		menuBar.add(experimental);
 		frame.setJMenuBar(menuBar);
 		
+		// Creates a new game, does not ask if the "user is sure" if the board is already clear.
 		newGame.addActionListener((ActionEvent event) ->
 		{
 			resetGame(!checkEmptyBoard());
 		});
+		// Closes out of the game
 		exitGame.addActionListener((ActionEvent event) ->
 		{
 			System.exit(0);
 		});
+		// Default blue color of Connect Four game board
 		changeColorDefault.addActionListener((ActionEvent event) ->
 		{
 			imagePanel.setBackground(background);
 		});
+		// Changes game board to black
 		changeColorBlack.addActionListener((ActionEvent event) ->
 		{
 			imagePanel.setBackground(new Color(20, 20, 20));
@@ -158,7 +165,7 @@ public class Connect4Game extends JFrame implements ActionListener
 				}
 			}
 		};
-		
+		// Sets up the game board for the first run
 		for(Integer i = 0; i < myButtons.length; i++)
 		{
 			myButtons[i] = new JButton(i.toString());
@@ -206,17 +213,19 @@ public class Connect4Game extends JFrame implements ActionListener
 		frame.setLocation(screenSize.width / 2 - frame.getSize().width / 2, screenSize.height / 2 - frame.getSize().height / 2);
 		frame.setVisible(true);
 	}
-	
+	// Method runs every check after every turn, allows the user to start over
 	public static boolean checkWinner()
 	{
 		String winnerName = new String();
 		boolean isWinner = true;
+		// Runs each check method once. Each check method returns an integer for the winner.
 		int horizontal = checkHorizontal();
 		int vertical = checkVertical();
 		int diagonal = checkDiags();
 		if((horizontal | vertical | diagonal) == 0) isWinner = false;
 		else if((horizontal | vertical | diagonal) == 1) winnerName = "Red";
 		else winnerName = "Yellow";
+		// Player won, player can start over without "Are you sure?"
 		if(isWinner)
 		{
 			int result = JOptionPane.showConfirmDialog(app, winnerName + " won!\nWould you like to start a new game?", "Game over", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -226,6 +235,7 @@ public class Connect4Game extends JFrame implements ActionListener
 			}
 			return true;
 		}
+		// No one won, makes sure the board is empty.
 		if(checkFilledBoard())
 		{
 			int result = JOptionPane.showConfirmDialog(app, "It's a tie!\nWould you like to start a new game?", "Game over", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
@@ -248,12 +258,14 @@ public class Connect4Game extends JFrame implements ActionListener
 	// Checks for any horizontal 4 in a rows. Returns 0 if none, returns 1 or 2 if there is.
 	public static int checkHorizontal()
 	{
+		//Checks to see if consecutive horizontal pieces are equal integers.
 		for(int i = 0; i < gameboard.length; i++)
 		{
 			for(int j = 0; j < gameboard[0].length-3; j++)
 			{
 				if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i][j+1] && gameboard[i][j]==gameboard[i][j+2] && gameboard[i][j]==gameboard[i][j+3])
 				{
+					// Changes these pieces to glowing variation
 					int winningLabel = j + 7*i;
 					for (int k = 0; k < 4; k++)
 					{
@@ -269,6 +281,7 @@ public class Connect4Game extends JFrame implements ActionListener
 	// Checks for any diagonal 4 in a rows. Returns 0 if none, returns 1 or 2 if there is.
 	public static int checkDiags()
 	{
+		// Checks to see if consecutive diagonal pieces, from top left to bottom right, are equal integers.
 		for(int i = 0; i < gameboard.length-3; i++)
 		{
 			for(int j = 0; j < gameboard[0].length-3; j++)
@@ -284,12 +297,14 @@ public class Connect4Game extends JFrame implements ActionListener
 				}
 			}
 		}
+		// Checks to see if consecutive diagonal pieces, from bottom right to top left, are equal integers
 		for(int i = gameboard.length-1; i > 2; i--)
 		{
 			for(int j = 0; j < gameboard[0].length-3; j++)
 			{
 				if (gameboard[i][j] != 0 && gameboard[i][j]==gameboard[i-1][j+1] && gameboard[i][j]==gameboard[i-2][j+2] && gameboard[i][j]==gameboard[i-3][j+3])
 				{
+					// Changes these pieces to glowing variation
 					int winningLabel = j + 7*i;
 					for (int k = 0; k < 4; k++)
 					{
@@ -305,12 +320,14 @@ public class Connect4Game extends JFrame implements ActionListener
 	// Checks for any vertical 4 in a rows. Returns 0 if none, returns 1 or 2 if there is.
 	public static int checkVertical()
 	{
+		// Checks to see if consecutive vertical pieces are equal integers
 		for(int i = 0; i < gameboard[0].length; i++)
 		{
 			for(int j = 0; j < gameboard.length-3; j++)
 			{
 				if (gameboard[j][i] != 0 && gameboard[j][i]==gameboard[j+1][i] && gameboard[j][i]==gameboard[j+2][i] && gameboard[j][i]==gameboard[j+3][i])
 				{
+					// Changes these pieces to glowing variation
 					int winningLabel = i + 7*j;
 					for (int k = 0; k < 4; k++)
 					{
@@ -343,6 +360,7 @@ public class Connect4Game extends JFrame implements ActionListener
 		{
 			for(int j = 0; j < gameboard[0].length; j++)
 			{
+				// The instant the method finds a 1 or a 2, we know the board is not empty
 				if(gameboard[i][j] != 0) return false;
 			}
 		}
@@ -372,6 +390,7 @@ public class Connect4Game extends JFrame implements ActionListener
 		{
 			column = Integer.parseInt(e.getActionCommand());
 			nextTurn();
+			// Console output
 			System.out.println("--------------");
 			System.out.println("Col: " + column);
 			System.out.println("Turn: " + turnNumber);
@@ -399,8 +418,10 @@ public class Connect4Game extends JFrame implements ActionListener
 	// Keeps track of all tiles, also checks for invalid moves.
 	public static void placeTile(int player)
 	{
+		//Determines if column is full by checking the top space.
 		if(gameboard[0][column] == 0)
 		{
+			//Goes down the desired column, if there is a nonzero space found, the method places a tile above it
 			outerLoop:
 				for(int i = 0; i < gameboard.length; i++)
 				{
@@ -409,12 +430,14 @@ public class Connect4Game extends JFrame implements ActionListener
 						gameboard[i-1][column] = player;
 						break outerLoop;
 					}
+					// Places a tile on the bottom if the column was previously empty
 					else if(i == 5 && gameboard[i][column]==0) gameboard[i][column] = player;
 				}
 		// Changes the current player icon.
 		if(player == 2) currentTurn = redSpace;
-			else currentTurn = yellowSpace;
+		else currentTurn = yellowSpace;
 		}
+		// Allows the user to go again if they clicked a full column
 		else turnNumber--;
 	}
 	
@@ -427,6 +450,7 @@ public class Connect4Game extends JFrame implements ActionListener
 			int result = JOptionPane.showConfirmDialog(app, "Are you sure?", "Start a new game?", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE);
 			if(result == JOptionPane.YES_OPTION)
 			{
+				//Reruns the code without an "Are you sure?"
 				resetGame(false);
 			}
 		}
