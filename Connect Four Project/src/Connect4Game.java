@@ -8,7 +8,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
-
+import resources.ResourceLoader;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -43,15 +43,13 @@ public class Connect4Game extends JFrame implements ActionListener
 	
 	// All three "StretchIcon" objects come from a class imported
 	// online. It allows the images to be flexible with any window size.
-	private static StretchIcon emptySpace = new StretchIcon("images/empty.png");
-	private static StretchIcon redSpace = new StretchIcon("images/red.png");
-	private static StretchIcon yellowSpace = new StretchIcon("images/yellow.png");
-	private static StretchIcon redWon = new StretchIcon("images/redwon.png");
-	private static StretchIcon yellowWon = new StretchIcon("images/yellowwon.png");
-	private static StretchIcon redHover = new StretchIcon("images/redhover.png");
-	private static StretchIcon yellowHover = new StretchIcon("images/yellowhover.png");
+	private static StretchIcon emptySpace = new StretchIcon(ResourceLoader.loadImage("empty.png"));
+	private static StretchIcon redSpace = new StretchIcon(ResourceLoader.loadImage("red.png"));
+	private static StretchIcon yellowSpace = new StretchIcon(ResourceLoader.loadImage("yellow.png"));
+	private static StretchIcon redWon = new StretchIcon(ResourceLoader.loadImage("redwon.png"));
+	private static StretchIcon yellowWon = new StretchIcon(ResourceLoader.loadImage("yellowwon.png"));
 	// The image of player's turn
-	private static StretchIcon currentTurn = redHover;
+	private static StretchIcon currentTurn = redSpace;
 	
 	// This color matches the background of the tiles.
 	private static Color background = new Color(88, 171, 251); 
@@ -414,8 +412,8 @@ public class Connect4Game extends JFrame implements ActionListener
 					else if(i == 5 && gameboard[i][column]==0) gameboard[i][column] = player;
 				}
 		// Changes the current player icon.
-		if(player == 2) currentTurn = redHover;
-			else currentTurn = yellowHover;
+		if(player == 2) currentTurn = redSpace;
+			else currentTurn = yellowSpace;
 		}
 		else turnNumber--;
 	}
@@ -442,7 +440,7 @@ public class Connect4Game extends JFrame implements ActionListener
 				}
 			}
 			paintGame();
-			currentTurn = redHover;
+			currentTurn = redSpace;
 			turnNumber = 0;
 		}
 	}
