@@ -45,6 +45,7 @@ public class Connect4Game extends JFrame implements ActionListener
 	
 	// All three "StretchIcon" objects come from a class imported
 	// online. It allows the images to be flexible with any window size.
+	// https://tips4java.wordpress.com/2012/03/31/stretch-icon/
 	private static StretchIcon emptySpace = new StretchIcon(ResourceLoader.loadImage("empty.png"));
 	private static StretchIcon redSpace = new StretchIcon(ResourceLoader.loadImage("red.png"));
 	private static StretchIcon yellowSpace = new StretchIcon(ResourceLoader.loadImage("yellow.png"));
@@ -67,8 +68,11 @@ public class Connect4Game extends JFrame implements ActionListener
 		System.setProperty("apple.laf.useScreenMenuBar", "true");
 		/*
 		 *  https://stackoverflow.com/questions/2554684/multiple-layout-managers-in-java
+		 *  
 		 *  Overlap layout comes from the class we imported from the Internet. It is only
 		 *  used with gamePanel.
+		 *       https://tips4java.wordpress.com/2009/07/26/overlap-layout/
+		 *	     This web site authored this class, which allows us to have a visible game board and an invisible cover.
 		 *  
 		 *  gamePanel - merges columnPanel and imagePanel into the game board
 		 *  columnPanel - contains the 7 JButtons that represent each column
@@ -433,9 +437,9 @@ public class Connect4Game extends JFrame implements ActionListener
 					// Places a tile on the bottom if the column was previously empty
 					else if(i == 5 && gameboard[i][column]==0) gameboard[i][column] = player;
 				}
-		// Changes the current player icon.
-		if(player == 2) currentTurn = redSpace;
-		else currentTurn = yellowSpace;
+			// Changes the current player icon.
+			if(player == 2) currentTurn = redSpace;
+			else currentTurn = yellowSpace;
 		}
 		// Allows the user to go again if they clicked a full column
 		else turnNumber--;
@@ -454,6 +458,7 @@ public class Connect4Game extends JFrame implements ActionListener
 				resetGame(false);
 			}
 		}
+		//Resets the game board
 		else
 		{
 			for(Integer i = 0; i < 6; i++)
